@@ -1,9 +1,8 @@
 # AgentAuth: Self-Authenticating IDs for AI Agents
 
-[![npm version](https://img.shields.io/npm/v/@agentauth/core.svg)](https://www.npmjs.com/package/@agentauth/core)
-[![npm downloads](https://img.shields.io/npm/dm/@agentauth/core.svg)](https://www.npmjs.com/package/@agentauth/core)
+[![npm version](https://img.shields.io/npm/v/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
+[![npm downloads](https://img.shields.io/npm/dm/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/agentcorelabs/agentauth/ci.yml?branch=main)](https://github.com/agentcorelabs/agentauth/actions)
 [![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
 
 Give any agent an `AgentAuth ID` — a stable, unique, verifiable UUID — and the power to authenticate using it, with no logins, accounts, or sessions required.
