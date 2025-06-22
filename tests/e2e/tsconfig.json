@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@agentauth/core": ["../../packages/agentauth-core/dist"],
+      "@agentauth/sdk": ["../../packages/agentauth-sdk/dist"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../../packages/agentauth-core" },
+    { "path": "../../packages/agentauth-sdk" }
+  ]
+} 

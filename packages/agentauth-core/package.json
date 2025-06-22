@@ -1,0 +1,63 @@
+{
+  "name": "@agentauth/core",
+  "version": "0.1.0",
+  "description": "Core identity and cryptographic primitives for AgentAuth",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "vitest run"
+  },
+  "author": "AgentAuth Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentcorelabs/agentauth.git",
+    "directory": "packages/agentauth-core"
+  },
+  "homepage": "https://github.com/agentcorelabs/agentauth#readme",
+  "bugs": {
+    "url": "https://github.com/agentcorelabs/agentauth/issues"
+  },
+  "keywords": [
+    "agentauth",
+    "authentication",
+    "identity",
+    "mcp",
+    "self-authenticating",
+    "cryptography",
+    "secp256k1",
+    "signatures",
+    "uuid",
+    "ai-agents",
+    "model-context-protocol"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@noble/secp256k1": "^2.1.0",
+    "@noble/hashes": "^1.8.0",
+    "buffer": "^6.0.3",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

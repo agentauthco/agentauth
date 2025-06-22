@@ -1,0 +1,38 @@
+{
+  "name": "agentauth-weather-example",
+  "version": "1.0.0",
+  "description": "Weather MCP server demonstrating AgentAuth integration with dual transport support",
+  "type": "module",
+  "bin": {
+    "weather-server": "./build/server.js"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"const fs = require('fs'); const path = './build/server.js'; if (process.platform !== 'win32') { fs.chmodSync(path, '755'); }\"",
+    "start": "npm run build && node build/server.js",
+    "start:sse": "npm run build && node build/server.js --transport=sse",
+    "start:http": "npm run build && node build/server.js --transport=http",
+    "dev": "npm run build && node build/server.js --transport=sse"
+  },
+  "keywords": [
+    "mcp",
+    "agentauth",
+    "weather",
+    "authentication",
+    "example"
+  ],
+  "author": "AgentCore Labs",
+  "license": "MIT",
+  "dependencies": {
+    "@agentauth/sdk": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.4.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}

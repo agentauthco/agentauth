@@ -1,0 +1,20 @@
+{
+  "name": "agentauth",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "test": "pnpm --filter=\"./packages/*\" test",
+    "build": "pnpm --filter=\"./packages/*\" build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "eslint": "^9.6.0",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@noble/hashes": "^1.8.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["es2022"],
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmitOnError": false,
+    "allowImportingTsExtensions": false
+  }
+} 

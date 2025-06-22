@@ -1,0 +1,48 @@
+{
+  "name": "@agentauth/sdk",
+  "version": "0.1.0",
+  "description": "MCP-native server-side authentication for AI agents.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "agentauth",
+    "authentication",
+    "identity",
+    "mcp",
+    "mcp-servers",
+    "sdk",
+    "ai-agents",
+    "model-context-protocol"
+  ],
+  "author": "AgentAuth Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentcorelabs/agentauth.git",
+    "directory": "packages/agentauth-sdk"
+  },
+  "homepage": "https://github.com/agentcorelabs/agentauth#readme",
+  "bugs": {
+    "url": "https://github.com/agentcorelabs/agentauth/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@agentauth/core": "0.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
