@@ -1,4 +1,4 @@
-# AgentAuth: Self-Authenticating IDs for AI Agents
+# AgentAuth: An MCP-Native Primitive for AI Agent Identity and Authentication
 
 [![npm version](https://img.shields.io/npm/v/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![npm downloads](https://img.shields.io/npm/dm/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
