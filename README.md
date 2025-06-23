@@ -1,4 +1,4 @@
-# AgentAuth: An MCP-Native Primitive for AI Agent Identity and Authentication
+# AgentAuth: An open-source, MCP-native primitive for AI agent identity and authentication
 
 [![npm version](https://img.shields.io/npm/v/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![npm downloads](https://img.shields.io/npm/dm/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
@@ -7,7 +7,7 @@
 
 **AgentAuth** makes it easy to give any agent an `AgentAuth ID` — a stable, unique, verifiable UUID — and the power to authenticate using it, with no logins, accounts, or sessions required.
 
-**AgentAuth** redefines agent identity: no emails or usernames, no accounts or wallets, no centralized trust layers. Just a single, lightweight, self-authenticating ID that delivers identity and trust, designed for native use with MCP.
+**AgentAuth** is an open-source, MCP-native primitive that redefines agent identity: no emails or usernames, no accounts or wallets, no centralized trust layers. Just a single, lightweight, self-authenticating ID that delivers identity and trust, designed for native use with MCP.
 
 ## 🔥 Why AgentAuth?
 
