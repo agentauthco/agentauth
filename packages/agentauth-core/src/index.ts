@@ -7,11 +7,42 @@ import * as secp from '@noble/secp256k1';
 import { keccak_256 } from '@noble/hashes/sha3';
 import { hmac } from '@noble/hashes/hmac';
 import { sha256 } from '@noble/hashes/sha2';
-import { Buffer } from 'buffer';
 import { v5 as uuidv5 } from 'uuid';
 
 // Set up HMAC for secp256k1 (required by the noble library)
 secp.etc.hmacSha256Sync = (k, ...m) => hmac(sha256, k, secp.etc.concatBytes(...m));
+
+/**
+ * Converts a hex string to Uint8Array
+ * @param hex The hex string (with or without 0x prefix)
+ * @returns Uint8Array of bytes
+ */
+function hexToBytes(hex: string): Uint8Array {
+  const cleanHex = hex.replace(/^0x/, '');
+  if (cleanHex.length % 2 !== 0) {
+    throw new Error('Hex string must have even length');
+  }
+  const bytes = new Uint8Array(cleanHex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    const byte = parseInt(cleanHex.substring(i * 2, i * 2 + 2), 16);
+    if (isNaN(byte)) {
+      throw new Error('Invalid hex string');
+    }
+    bytes[i] = byte;
+  }
+  return bytes;
+}
+
+/**
+ * Converts a Uint8Array to hex string
+ * @param bytes The byte array
+ * @returns Hex string (without 0x prefix)
+ */
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 export type Algorithm = 'secp256k1';
 
@@ -53,7 +84,7 @@ export function deriveAddress(privateKey: string): string {
   try {
     // Parse and validate private key
     const cleanPrivateKey = parsePrivateKey(privateKey);
-    const privateKeyBytes = Buffer.from(cleanPrivateKey, 'hex');
+    const privateKeyBytes = hexToBytes(cleanPrivateKey);
     
     // Get uncompressed public key (65 bytes: 0x04 + 32 + 32)
     const publicKeyBytes = secp.getPublicKey(privateKeyBytes, false);
@@ -64,7 +95,7 @@ export function deriveAddress(privateKey: string): string {
     // Hash with keccak256 and take last 20 bytes for address
     const addressBytes = keccak_256(publicKeyCoords).slice(-20);
     
-    return '0x' + Buffer.from(addressBytes).toString('hex');
+    return '0x' + bytesToHex(addressBytes);
   } catch (error) {
     throw new Error('Failed to derive address: The provided private key is invalid.');
   }
@@ -93,7 +124,7 @@ export function generateIdentity(
 
   // Generate private key
   const privateKeyBytes = secp.utils.randomPrivateKey();
-  const agentauth_token = `aa-${Buffer.from(privateKeyBytes).toString('hex')}`;
+  const agentauth_token = `aa-${bytesToHex(privateKeyBytes)}`;
   
   // Derive address and ID
   const agentauth_address = deriveAddress(agentauth_token);
@@ -118,7 +149,7 @@ export function signPayload(
     
     // Parse private key (handles any format)
     const cleanPrivateKey = parsePrivateKey(privateKey);
-    const privateKeyBytes = Buffer.from(cleanPrivateKey, 'hex');
+    const privateKeyBytes = hexToBytes(cleanPrivateKey);
     
     const signature = secp.sign(messageHash, privateKeyBytes);
     
@@ -171,7 +202,7 @@ export function verifySignature(
     const publicKeyBytes = recoveredPublicKey.toRawBytes(false); // uncompressed
     const publicKeyCoords = publicKeyBytes.slice(1); // Remove 0x04 prefix
     const addressBytes = keccak_256(publicKeyCoords).slice(-20);
-    const recoveredAddress = '0x' + Buffer.from(addressBytes).toString('hex');
+    const recoveredAddress = '0x' + bytesToHex(addressBytes);
     
     // Compare addresses (case-insensitive)
     return recoveredAddress.toLowerCase() === expectedAddress.toLowerCase();
