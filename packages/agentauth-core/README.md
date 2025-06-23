@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
 
-Core identity and cryptographic primitives for **AgentAuth** — a self-authenticating identity system for AI agents.
+Core identity primitive and cryptographic components for **AgentAuth** — a self-authenticating identity system for AI agents.
 
 This package provides the low-level cryptographic foundation used by the AgentAuth ecosystem. It handles key generation, address derivation, signing, and verification using secp256k1 elliptic curve cryptography.
 
@@ -18,8 +18,7 @@ Learn more about AgentAuth at https://github.com/agentcorelabs/agentauth.
 - **🔐 Industry-standard Cryptography** — Uses secp256k1 and battle-tested industry standards throughout
 - **🆔 Deterministic UUIDs** — Same private key always generates the same UUID
 - **✍️ Sign & Verify** — Simple payload signing and verification for authentication flows
-- **🛡️ Well-Audited Dependencies** — Built on Noble cryptographic libraries
-- **📦 Zero Dependencies** — Minimal, focused package with only essential crypto libs
+- **🛡️ Minimal, Well-Audited Dependencies** — Built on Noble cryptographic libraries, UUID, and nothing else
 
 ## Installation
 
@@ -46,12 +45,15 @@ console.log(identity);
 ```
 
 The identity includes:
-- `agentauth_token`: The private key (with aa- prefix) - ⚠️ keep this secret!
+- `agentauth_token`: The private key (with aa- prefix) — ⚠️ keep this secret!
 - `agentauth_address`: An industry-standard address derived from `agentauth_token`, used for verification
 - `agentauth_id`: A stable UUID v5 derived from `agentauth_address`
 
-💡 Tip: As you can see, all you actually need to re-derive the full idnetity is the `agentauth_token`, which is what makes the system lightweight!
-⚠️ Note: That's also why it's so important to protect it during usage (e.g. by only using it locally), and for users to store it **SECURELY**!
+> [!TIP]
+> As you can see, all you actually need to re-derive the full identity primitive is the `agentauth_token`, which makes it super lightweight!
+
+> [!IMPORTANT]
+> That's also why it's so important to protect it during usage (e.g. by only using it locally), and for users to store it **SECURELY**!
 
 ### Work with Existing Keys
 
@@ -91,13 +93,13 @@ const isValid = verifySignature(signature, payload, address);
 console.log(isValid); // true
 ```
 
-## Core Primitives
+## Identity Primitive
 
-AgentAuth is built on three fundamental primitives that work together to provide a complete identity system. Each primitive serves a specific purpose and was chosen for both technical and practical reasons.
+The AgentAuth identity primitive consists of three components that work together to provide a complete, self-contained identity system. Each component serves a specific purpose and was chosen for both technical and practical reasons.
 
 ### AgentAuth Token (`agentauth_token`)
 
-**What it is:** A secp256k1 private key with an `aa-` prefix, formatted as 64 characters of hex.
+**What it is:** A secp256k1 private key with an `aa-` prefix, formatted as 64 characters of hex, used for signing and authentication.
 
 ```
 Format: aa-[64 hex characters]
@@ -119,11 +121,12 @@ Example: aa-2337b9fa957a201db466a58065529dc40362e008d3f41655651b96b2abbcb602
 
 We use [@noble/secp256k1](https://github.com/paulmillr/noble-secp256k1) for all cryptographic operations, chosen for its audit history and constant-time implementations.
 
-ℹ️ Info: While AgentAuth currently uses secp256k1 for its default identity system — chosen for its ecosystem maturity, developer familiarity, and audit-backed performance — future versions of AgentAuth will **also** support Ed25519-based tokens for broader cryptographic interoperability and enhanced performance characteristics.
+> [!NOTE]
+> While AgentAuth currently uses secp256k1 for its default identity system — chosen for its ecosystem maturity, developer familiarity, and audit-backed performance — future versions of AgentAuth will **also** support Ed25519-based tokens for broader cryptographic interoperability and enhanced performance characteristics.
 
 ### AgentAuth Address (`agentauth_address`)
 
-**What it is:** A cryptographically stable and secure address derived from the private key using keccak256 derivation.
+**What it is:** A cryptographically stable and secure address derived from the private key using keccak256 derivation, used for signature verification
 
 ```
 Format: 0x[40 hex characters]
@@ -147,7 +150,7 @@ The derivation follows Ethereum's address derivation: keccak256(publicKey)[12:] 
 
 ### AgentAuth ID (`agentauth_id`)
 
-**What it is:** A UUID v5 generated deterministically from the AgentAuth Address.
+**What it is:** A UUID v5 generated deterministically from the AgentAuth Address, used for stable identification across systems
 
 ```
 Format: [UUID v5]
@@ -170,9 +173,9 @@ Example: 811ec2bf-b653-573a-b2ea-6ff4df9fdad7
 
 We use a fixed, custom namespace UUID (`2f5a5c48-c283-4231-8975-9271fe11e86c`) to derive all AgentAuth UUIDs to ensure they are all unique and stable.
 
-## How It Works
+## How AgentAuth Works
 
-Understanding how AgentAuth works under the hood helps explain why it's both secure and simple. The system is built on four key processes that work together.
+Understanding how AgentAuth works with this library under the hood helps explain why it's both secure and simple. The system is built on four key processes that utilize this library, in conjunction with the identity primitive above.
 
 ### Identity Generation Process
 
@@ -199,7 +202,7 @@ const uuid = generateId(address);               // UUID v5 generation
 
 ### Primitive Derivation Process
 
-The three primitives are mathematically related through a deterministic chain:
+The identity primitive's three components are mathematically related through a deterministic chain:
 
 ```mermaid
 flowchart
@@ -255,10 +258,11 @@ const message = JSON.stringify(payload);  // Must be deterministic
 - **Efficient verification:** Verify without storing state or tracking used nonces
 - **HTTP compatible:** Works with standard HTTP header mechanisms
 
-**Notes on nonces:** We deliberately chose timestamp-based replay protection over nonces to maintain statelessness:
+**Note on nonces:** We deliberately chose timestamp-based replay protection over nonces to maintain statelessness:
 - Nonces would require servers to track used values, adding complexity and storage requirements
 - A freshness window provides adequate replay protection for most use cases while keeping verification completely stateless
-- Future versions of this library may add optional nonce support for applications requiring additional stateful security measures
+- Future versions of @agentauth/mcp and @agentauth/sdk may add optional nonce support for applications requiring additional stateful security measures
+- It's also worth noting that the @agentauth/core library itself is designed for maximum flexibility and is **unopinionated** about the payloads it signs
 
 **Industry precedent:** Timestamp-based authentication windows are widely used across the industry:
 - **AWS Signature V4:** 15-minute default window for signed requests
@@ -487,8 +491,7 @@ Build a simple authentication system:
 ```typescript
 // Client side: Sign authentication request
 const authPayload = {
-  timestamp: new Date().toISOString(),
-  nonce: crypto.randomUUID()
+  timestamp: new Date().toISOString()
 };
 const signature = signPayload(authPayload, privateKey);
 const address = deriveAddress(privateKey);
@@ -521,7 +524,7 @@ deriveAddress(key1) === deriveAddress(key2) === deriveAddress(key3);
 
 - **Private keys** (`agentauth_token`) should be kept secret and stored securely
 - **Deterministic generation** means same private key always produces same ID
-- **No random salts** in signatures - include timestamp/nonce in payload for replay protection
+- **No random salts** in signatures — include timestamp in payload for replay protection
 - **Ethereum compatibility** allows integration with existing Ethereum development tools for testing and debugging
 - **Noble libraries** provide audited, constant-time implementations
 
@@ -550,14 +553,14 @@ AgentAuth is an early-stage open-source project maintained by the AgentCore Labs
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/agentcorelabs/agentauth/blob/main/LICENSE) for details.
+MIT License — see [LICENSE](https://github.com/agentcorelabs/agentauth/blob/main/LICENSE) for details.
 
 ## Links
 
-- **Website**: [agentauth.co](https://agentauth.co)
-- **Documentation**: [docs.agentauth.co](https://docs.agentauth.co)  
-- **GitHub**: [agentcorelabs/agentauth](https://github.com/agentcorelabs/agentauth)
-- **npm**: [@agentauth/core](https://www.npmjs.com/package/@agentauth/core)
+- **Website** — [agentauth.co](https://agentauth.co)
+- **Documentation** — [docs.agentauth.co](https://docs.agentauth.co)  
+- **GitHub** — [agentcorelabs/agentauth](https://github.com/agentcorelabs/agentauth)
+- **npm** — [@agentauth/core](https://www.npmjs.com/package/@agentauth/core)
 
 ---
 
