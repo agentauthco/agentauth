@@ -9,7 +9,7 @@
 
 AgentAuth is a **self-authenticating UUID for AI agents** — a simple, lightweight, open-source primitive for universal identity and trust, designed for use with MCP and agent-native systems.
 
-No logins. No sessions. No extra infra. Just identity and authentication in a single UUID.
+No logins. No sessions. No extra infra. Just a single UUID for both identity and authentication.
 
 ## 🔥 Why AgentAuth?
 
