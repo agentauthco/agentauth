@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
 
-## What if all you needed was a UUID?
+## 💡 What if all you needed was a UUID?
 
 AgentAuth is a **self-authenticating UUID for AI agents** — a simple, lightweight, open-source primitive for universal identity and trust, designed for use with MCP and agent-native systems.
 
