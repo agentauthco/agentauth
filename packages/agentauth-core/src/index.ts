@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 AgentCore Labs
+ * Copyright (c) 2025 AgentAuth
  * SPDX-License-Identifier: MIT
  */
 

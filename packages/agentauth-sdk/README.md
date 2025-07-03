@@ -1,18 +1,18 @@
-# @agentauth/sdk: MCP-Native Server-Side Authentication for AI Agents
+# @agentauth/sdk: MCP-Native Authentication for AI Agents
 
 [![npm version](https://img.shields.io/npm/v/@agentauth/sdk.svg)](https://www.npmjs.com/package/@agentauth/sdk)
 [![npm downloads](https://img.shields.io/npm/dm/@agentauth/sdk.svg)](https://www.npmjs.com/package/@agentauth/sdk)
 [![Types](https://img.shields.io/npm/types/@agentauth/sdk)](https://www.npmjs.com/package/@agentauth/sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
+[![GitHub stars](https://img.shields.io/github/stars/agentauthco/agentauth?style=social)](https://github.com/agentauthco/agentauth)
 
-Server SDK for **AgentAuth** — authenticate AI agents with self-authenticating IDs over MCP.
+Server-side SDK for **AgentAuth ID** — easily authenticate AI agents over MCP using AgentAuth ID.
 
-AgentAuth gives any agent an `AgentAuth ID` — a stable, unique, verifiable UUID — and the power to authenticate using it, with no logins, accounts, or sessions required.
+AgentAuth ID is a **self-authenticating UUID for AI agents** — a simple, lightweight, open-source primitive for universal identity and trust, designed for use with MCP and agent-native systems.
 
-AgentAuth redefines agent identity: no emails or usernames, no accounts or wallets, no centralized trust layers. Just a single, lightweight ID that delivers identity and trust, designed for native use with MCP.
+No logins. No sessions. No extra infra. Just a single UUID for both identity and authentication.
 
-Learn more about AgentAuth at https://github.com/agentcorelabs/agentauth.
+Learn more about AgentAuth at https://github.com/agentauthco/agentauth.
 
 ## Why @agentauth/sdk?
 
@@ -53,7 +53,7 @@ if (result.valid) {
 
 ### MCP Server Integration
 
-Here's how to add AgentAuth to your MCP server:
+Here's how to add AgentAuth ID authentication to your MCP server:
 
 ```typescript
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -149,7 +149,7 @@ If you already have an **AgentAuth Token**, include it as an environment variabl
 }
 \`\`\`
 
-Learn more about the open-source AgentAuth authentication standard at https://agentauth.co or https://github.com/agentcorelabs/agentauth.
+Learn more about the open-source AgentAuth authentication standard at https://agentauth.co or https://github.com/agentauthco/agentauth.
 ```
 
 **2. MCP Server Tool**
@@ -385,13 +385,13 @@ interface MyRequest extends AgentAuthRequest {
 
 ### Complete Working Example
 
-We provide a full working example [weather server](https://github.com/agentcorelabs/agentauth/tree/main/examples/weather-server) to help with development and testing.
+We provide a full working example [weather server](https://github.com/agentauthco/agentauth/tree/main/examples/weather-server) to help with development and testing.
 
 **1. Start the Weather Server:**
 
 ```bash
 # Start by cloning the AgentAuth repository
-git clone https://github.com/agentcorelabs/agentauth.git
+git clone https://github.com/agentauthco/agentauth.git
 
 # The example uses AgentAuth workspace dependencies, so install and build from root, first
 cd agentauth
@@ -429,7 +429,9 @@ With Authentication:
 ```bash
 # Generate credentials for testing
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 ```json
@@ -458,17 +460,17 @@ Start/Restart your MCP client and try:
 - **Real-world integration** - External API usage with proper error handling
 - **Production patterns** - Middleware, rate limiting, database-ready UUIDs
 
-👉 **[Full Example Guide](https://github.com/agentcorelabs/agentauth/tree/main/examples/weather-server/README.md)**
+👉 **[Full Example Guide](https://github.com/agentauthco/agentauth/tree/main/examples/weather-server/README.md)**
 
 ### Testing Resources
 
 **Unit Tests:**
-- This package includes comprehensive unit tests in its [`src/` directory](https://github.com/agentcorelabs/agentauth/packages/agentauth-sdk/src)
+- This package includes comprehensive unit tests in its [`src/` directory](https://github.com/agentauthco/agentauth/packages/agentauth-sdk/src)
 - Use them to test the core `verify()` function with various scenarios
 - Coverage includes signature validation, timestamp freshness, and error cases
 
 **End-to-End Tests:**
-- Located in the [GitHub repository tests directory](https://github.com/agentcorelabs/agentauth/tree/main/tests/e2e)
+- Located in the [GitHub repository tests directory](https://github.com/agentauthco/agentauth/tree/main/tests/e2e)
 - Full integration tests with real MCP clients and servers
 - Test complete authentication flows from client to server
 
@@ -491,19 +493,19 @@ A: Absolutely! Just check if `verify()` returns valid and provide different expe
 
 ## Contributing
 
-AgentAuth is an early-stage open-source project maintained by the AgentCore Labs team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentcorelabs/agentauth/issues). You can also reach out at [developers@agentcore.me](mailto:developers@agentcore.me?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
+AgentAuth ID is an early-stage open-source project maintained by the AgentAuth team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentauthco/agentauth/issues). You can also reach out at [developers@agentauth.co](mailto:developers@agentauth.co?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/agentcorelabs/agentauth/blob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/agentauthco/agentauth/blob/main/LICENSE) for details.
 
 ## Links
 
 - **Website**: [agentauth.co](https://agentauth.co)
 - **Documentation**: [docs.agentauth.co](https://docs.agentauth.co)
-- **GitHub**: [agentcorelabs/agentauth](https://github.com/agentcorelabs/agentauth)
+- **GitHub**: [agentauthco/agentauth](https://github.com/agentauthco/agentauth)
 - **npm**: [@agentauth/sdk](https://www.npmjs.com/package/@agentauth/sdk)
 
 ---
 
-**Built by [AgentCore Labs](https://agentcore.me)** - Advancing the frontier of AI agent infrastructure.
+**Built by [AgentAuth](https://agentauth.co)** - The Collaboration Layer for AI Agents.

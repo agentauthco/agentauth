@@ -4,14 +4,14 @@
 [![npm downloads](https://img.shields.io/npm/dm/@agentauth/mcp.svg)](https://www.npmjs.com/package/@agentauth/mcp)
 [![Types](https://img.shields.io/npm/types/@agentauth/mcp)](https://www.npmjs.com/package/@agentauth/mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
+[![GitHub stars](https://img.shields.io/github/stars/agentauthco/agentauth?style=social)](https://github.com/agentauthco/agentauth)
 
 Connect any MCP client to any remote MCP server — with or without authentication.
 
 ## Why `@agentauth/mcp`?
 
 - ✅ **Supports all auth types** — Compatible with MCP servers using no auth, AgentAuth, or other auth methods
-- ✅ **Native support for AgentAuth** — Natively supports connecting to AgentAuth-enabled MCP servers
+- ✅ **Native support for AgentAuth** — Natively supports connecting to MCP servers using AgentAuth
 - ✅ **Transport compatibility** — Automatically handles both HTTP and SSE MCP server connections
 - ✅ **Super simple config** — Just set the server config once and forget
 - ✅ **Works with all clients** — Works with all popular MCP clients like Claude, Cursor, Windsurf, and more
@@ -51,29 +51,33 @@ AgentAuth is an open-source standard that lets you give any agent an `AgentAuth 
 To connect to any AgentAuth-enabled MCP server:
 
 1. **Generate your `AgentAuth Token`:**
-   ```bash
-   agentauth-mcp generate
-   # Output: AGENTAUTH_TOKEN=aa-...
-   ```
+
+```bash
+agentauth-mcp generate
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
+```
 
 The `AgentAuth Token` is like the password for your agent's `AgentAuth ID` -- and, since the `AgentAuth Token` is used to derive the `AgentAuth ID`, it's all you need to include in your configuration!
 
 ⚠️ Note: Just like any password, please remember to store your `AgentAuth Token` **SECURELY** and never share it with anyone, as it is used to authenticate your agent.
 
 2. **Add it to your MCP client config (e.g. Claude, Cursor, Windsurf):**
-   ```json
-   {
-     "mcpServers": {
-       "my-server": {
-         "command": "agentauth-mcp",
-         "args": ["connect", "https://example.com/mcp"],
-         "env": {
-           "AGENTAUTH_TOKEN": "aa-..."
-         }
-       }
-     }
-   }
-   ```
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "agentauth-mcp",
+      "args": ["connect", "https://example.com/mcp"],
+      "env": {
+        "AGENTAUTH_TOKEN": "aa-..."
+      }
+    }
+  }
+}
+```
 
 And you're all set!
 
@@ -112,6 +116,9 @@ agentauth-mcp connect http://localhost:8000/mcp --debug
 
 # Force specific transport
 agentauth-mcp connect http://localhost:8000/mcp/sse --transport sse-only
+
+# Allow HTTP for non-localhost (development only)
+agentauth-mcp connect http://example.com/mcp --allow-http
 ```
 
 **Options:**
@@ -120,7 +127,10 @@ agentauth-mcp connect http://localhost:8000/mcp/sse --transport sse-only
   - `sse-first`: Try SSE, fallback to HTTP  
   - `http-only`: HTTP only
   - `sse-only`: SSE only
+- `--allow-http`: Allow HTTP connections (not recommended for production, default: false)
 - `--debug, -d`: Enable debug logging
+
+⚠️ **Security Note**: HTTPS is enforced by default. HTTP connections are only allowed for localhost or when using the `--allow-http` flag.
 
 **Example MCP Client Configuration:**
 
@@ -149,6 +159,7 @@ agentauth-mcp generate
 ```
 
 **Output:**
+- `AGENTAUTH_ID`: Your agent's stable UUID (same across all servers)
 - `AGENTAUTH_TOKEN`: Your agent's access token ("aa-" prefixed), like a password
 
 ⚠️ Note: Just like any password, please remember to store your `AgentAuth Token` **SECURELY** and never share it with anyone, as it is used to authenticate your agent.
@@ -252,13 +263,13 @@ We're building agentauth-mcp to handle **any** authentication method -- includin
 
 ## Try It: Weather Server Demo
 
-We provide a full working example [weather server](https://github.com/agentcorelabs/agentauth/tree/main/examples/weather-server) to help with development and testing.
+We provide a full working example [weather server](https://github.com/agentauthco/agentauth/tree/main/examples/weather-server) to help with development and testing.
 
 **1. Start the Weather Server:**
 
 ```bash
 # Start by cloning the AgentAuth repository
-git clone https://github.com/agentcorelabs/agentauth.git
+git clone https://github.com/agentauthco/agentauth.git
 
 # The example uses AgentAuth workspace dependencies, so install and build from root, first
 cd agentauth
@@ -291,7 +302,9 @@ With Authentication:
 ```bash
 # Generate credentials for testing
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 ```json
@@ -320,7 +333,7 @@ Start/Restart your MCP client and try:
 - **Real-world integration** - External API usage with proper error handling
 - **Production patterns** - Middleware, rate limiting, database-ready UUIDs
 
-👉 **[Full Example Guide](https://github.com/agentcorelabs/agentauth/tree/main/examples/weather-server/README.md)**
+👉 **[Full Example Guide](https://github.com/agentauthco/agentauth/tree/main/examples/weather-server/README.md)**
 
 ## Technical Details
 
@@ -371,7 +384,7 @@ agentauth-mcp generate
 
 ```bash
 # Clone and build from repository root (uses workspace dependencies)
-git clone https://github.com/agentcorelabs/agentauth
+git clone https://github.com/agentauthco/agentauth
 cd agentauth
 pnpm install
 pnpm run build
@@ -401,7 +414,7 @@ A: Just change the `command` from the server executable to `agentauth-mcp` and a
 
 ## Contributing
 
-AgentAuth is an early-stage open-source project maintained by the AgentCore Labs team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentcorelabs/agentauth/issues). You can also reach out at [developers@agentcore.me](mailto:developers@agentcore.me?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
+AgentAuth MCP is an early-stage open-source project maintained by the AgentAuth team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentauthco/agentauth/issues). You can also reach out at [developers@agentauth.co](mailto:developers@agentauth.co?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
 
 ## Credits
 
@@ -409,15 +422,15 @@ Transport connection logic adapted from [mcp-remote](https://www.npmjs.com/packa
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/agentcorelabs/agentauth/blob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/agentauthco/agentauth/blob/main/LICENSE) for details.
 
 ## Links
 
 - **Website**: [agentauth.co](https://agentauth.co)
 - **Documentation**: [docs.agentauth.co](https://docs.agentauth.co)
-- **GitHub**: [agentcorelabs/agentauth](https://github.com/agentcorelabs/agentauth)
+- **GitHub**: [agentauthco/agentauth](https://github.com/agentauthco/agentauth)
 - **npm**: [@agentauth/mcp](https://www.npmjs.com/package/@agentauth/mcp)
 
 ---
 
-**Built by [AgentCore Labs](https://agentcore.me)** - Advancing the frontier of AI agent infrastructure.
+**Built by [AgentAuth](https://agentauth.co)** - The Collaboration Layer for AI Agents.

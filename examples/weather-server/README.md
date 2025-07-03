@@ -20,7 +20,7 @@ An authenticated agent's **AgentAuth ID** (a stable, verifiable UUID) persists a
 
 ```bash
 # Start by cloning the AgentAuth repository
-git clone https://github.com/agentcorelabs/agentauth.git
+git clone https://github.com/agentauthco/agentauth.git
 
 # The example uses AgentAuth workspace dependencies, so install and build from root, first
 cd agentauth
@@ -68,7 +68,9 @@ Configure your MCP Client (e.g. Claude, Cursor, Windsurf, etc.):
 First, generate your AgentAuth credentials:
 ```bash
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 Then, configure your MCP Client (e.g. Claude, Cursor, Windsurf, etc.):
@@ -168,10 +170,13 @@ Both transports provide identical functionality and AgentAuth support.
 - 💡 Clear instructions on how to authenticate
 
 ### 2. Authenticated Usage
+
 ```bash
 npm install -g @agentauth/mcp
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 **Configure MCP Client With Authentication:**

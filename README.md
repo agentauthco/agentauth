@@ -1,17 +1,17 @@
-# AgentAuth: The Self-Authenticating UUID for AI Agents
+# AgentAuth ID: The Self-Authenticating UUID for AI Agents
 
 [![npm version](https://img.shields.io/npm/v/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![npm downloads](https://img.shields.io/npm/dm/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
+[![GitHub stars](https://img.shields.io/github/stars/agentauthco/agentauth?style=social)](https://github.com/agentauthco/agentauth)
 
 ## 💡 What if all you needed was a UUID?
 
-AgentAuth is a **self-authenticating UUID for AI agents** — a simple, lightweight, open-source primitive for universal identity and trust, designed for use with MCP and agent-native systems.
+AgentAuth ID is a **self-authenticating UUID for AI agents** — a simple, lightweight, open-source primitive for universal identity and trust, designed for use with MCP and agent-native systems.
 
 No logins. No sessions. No extra infra. Just a single UUID for both identity and authentication.
 
-## 🔥 Why AgentAuth?
+## 🔥 Why AgentAuth ID?
 
 - **Purpose-built for AI agents** — Easy to generate and manage, no user accounts needed
 - **Works across any MCP server** — Universal, stable, and designed for use with agent-native communication protocols like MCP
@@ -26,7 +26,9 @@ No logins. No sessions. No extra infra. Just a single UUID for both identity and
 ```bash
 npm install -g @agentauth/mcp
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 The `AgentAuth Token` is like the password for a corresponding `AgentAuth ID` — and, since the `AgentAuth Token` can be used to derive the `AgentAuth ID`, it's all you need to include in your configuration!
@@ -163,7 +165,9 @@ As an MCP client user, you will be using the [`@agentauth/mcp`](./packages/agent
 ```bash
 npm install -g @agentauth/mcp
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 The `generate` command generates a unique `AgentAuth Token` (starts with `aa-`) for your agent.
@@ -308,7 +312,7 @@ server.tool(
 
 ```bash
 # Clone the repository
-git clone https://github.com/agentcorelabs/agentauth.git
+git clone https://github.com/agentauthco/agentauth.git
 cd agentauth
 
 # Install all workspace dependencies (packages, examples, tests)
@@ -347,7 +351,7 @@ cd examples/weather-server && pnpm run start  # Starts the weather server at htt
 
 ## 🤝 Contributing
 
-AgentAuth is an early-stage open-source project maintained by the AgentCore Labs team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentcorelabs/agentauth/issues). You can also reach out at [developers@agentcore.me](mailto:developers@agentcore.me?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
+AgentAuth ID is an early-stage open-source project maintained by the AgentAuth team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentauthco/agentauth/issues). You can also reach out at [developers@agentauth.co](mailto:developers@agentauth.co?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
 
 ## 📄 License
 
@@ -358,8 +362,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 - **Website** — [agentauth.co](https://agentauth.co)
 - **Documentation** — [docs.agentauth.co](https://docs.agentauth.co)  
 - **npm** — [@agentauth](https://www.npmjs.com/org/agentauth)
-- **Issues** — [GitHub Issues](https://github.com/agentcorelabs/agentauth/issues)
+- **Issues** — [GitHub Issues](https://github.com/agentauthco/agentauth/issues)
 
 ---
 
-**Built by [AgentCore Labs](https://agentcore.me)** — Advancing the frontier of AI agent infrastructure.
+**Built by [AgentAuth](https://agentauth.co)** — The Collaboration Layer for AI Agents.

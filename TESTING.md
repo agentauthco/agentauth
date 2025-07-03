@@ -5,7 +5,7 @@
 ### **Run All Unit Tests (Safe)**
 ```bash
 # From monorepo root - runs all package tests individually
-git clone https://github.com/agentcorelabs/agentauth.git
+git clone https://github.com/agentauthco/agentauth.git
 cd agentauth
 pnpm install
 pnpm run build
@@ -37,10 +37,10 @@ npx vitest run              # ✅ Single run, exits properly
 |---------|-------|---------|
 | **agentauth-core** | 18 tests | Core cryptographic functions |
 | **agentauth-sdk** | 11 tests | Address-based verification API |
-| **agentauth-mcp** | 13 tests | CLI commands (generate, derive, connect) |
-| **e2e-tests** | 7 tests | End-to-end CLI and server integration |
+| **agentauth-mcp** | 16 tests | CLI commands (generate, derive, connect) |
+| **e2e-tests** | 8 tests | End-to-end CLI and server integration |
 
-**Total: 49 tests**
+**Total: 53 tests**
 
 ## 🧪 **Test Categories**
 
@@ -89,6 +89,7 @@ npx vitest run              # ✅ Single run, exits properly
 ### **Working Example Server**
 
 **1. Start the Weather Server**
+
 ```bash
 # Start server (from repo root)
 cd examples/weather-server
@@ -97,11 +98,6 @@ pnpm run start # Defaults to HTTP
 ```
 
 **2. Configure your MCP Client (e.g. Claude, Cursor, Windsurf, etc.)**
-```bash
-# Generate credentials for testing
-agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
-```
 
 Without Authentication:
 ```json
@@ -119,7 +115,9 @@ With Authentication:
 ```bash
 # Generate credentials for testing
 agentauth-mcp generate
-# Output: AGENTAUTH_TOKEN=aa-...
+# Output:
+AGENTAUTH_ID=...
+AGENTAUTH_TOKEN=aa-...
 ```
 
 ```json
@@ -157,6 +155,7 @@ Start/Restart your MCP client and try:
 4. **Accept timeouts as success** for connection attempts
 
 ### **Test Design Principles**
+
 ```typescript
 // ✅ Good - Tests specific functionality
 it('should validate credentials format', async () => {
@@ -230,6 +229,7 @@ npx vitest run -t "should generate"
 4. Verify no hanging behavior
 
 ### **Regular Health Checks**
+
 ```bash
 # Weekly test run to ensure no regressions
 cd agentauth-packages

@@ -1,16 +1,16 @@
-# @agentauth/core: Core Identity and Cryptographic Primitives for AgentAuth
+# @agentauth/core: Core Identity and Cryptographic Primitives for AgentAuth ID
 
 [![npm version](https://img.shields.io/npm/v/@agentauth/core.svg)](https://www.npmjs.com/package/@agentauth/core)
 [![npm downloads](https://img.shields.io/npm/dm/@agentauth/core.svg)](https://www.npmjs.com/package/@agentauth/core)
 [![Types](https://img.shields.io/npm/types/@agentauth/core)](https://www.npmjs.com/package/@agentauth/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub stars](https://img.shields.io/github/stars/agentcorelabs/agentauth?style=social)](https://github.com/agentcorelabs/agentauth)
+[![GitHub stars](https://img.shields.io/github/stars/agentauthco/agentauth?style=social)](https://github.com/agentauthco/agentauth)
 
-Core identity primitive and cryptographic components for **AgentAuth** — a self-authenticating identity system for AI agents.
+Core identity primitive and cryptographic components for **AgentAuth ID** — the self-authenticating UUID for AI agents.
 
 This package provides the low-level cryptographic foundation used by the AgentAuth ecosystem. It handles key generation, address derivation, signing, and verification using secp256k1 elliptic curve cryptography.
 
-Learn more about AgentAuth at https://github.com/agentcorelabs/agentauth.
+Learn more about AgentAuth at https://github.com/agentauthco/agentauth.
 
 ## Why @agentauth/core?
 
@@ -549,19 +549,19 @@ npm test
 
 ## Contributing
 
-AgentAuth is an early-stage open-source project maintained by the AgentCore Labs team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentcorelabs/agentauth/issues). You can also reach out at [developers@agentcore.me](mailto:developers@agentcore.me?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
+AgentAuth ID is an early-stage open-source project maintained by the AgentAuth Labs team. We welcome bug reports, feature suggestions, and early feedback via [GitHub Issues](https://github.com/agentauthco/agentauth/issues). You can also reach out at [developers@agentauth.co](mailto:developers@agentauth.co?subject=Contributing%20to%20AgentAuth) if you are interested in contributing.
 
 ## License
 
-MIT License — see [LICENSE](https://github.com/agentcorelabs/agentauth/blob/main/LICENSE) for details.
+MIT License — see [LICENSE](https://github.com/agentauthco/agentauth/blob/main/LICENSE) for details.
 
 ## Links
 
 - **Website** — [agentauth.co](https://agentauth.co)
 - **Documentation** — [docs.agentauth.co](https://docs.agentauth.co)  
-- **GitHub** — [agentcorelabs/agentauth](https://github.com/agentcorelabs/agentauth)
+- **GitHub** — [agentauthco/agentauth](https://github.com/agentauthco/agentauth)
 - **npm** — [@agentauth/core](https://www.npmjs.com/package/@agentauth/core)
 
 ---
 
-**Built by [AgentCore Labs](https://agentcore.me)** — Advancing the frontier of AI agent infrastructure.
+**Built by [AgentAuth](https://agentauth.co)** — The Collaboration Layer for AI Agents.
