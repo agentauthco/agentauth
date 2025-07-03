@@ -23,10 +23,9 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   generateIdentity,
   deriveAddress,
-  generateId,
-  signPayload,
+  generateId
 } from '@agentauth/core';
-import { connectToRemoteServer, log, mcpProxy, setDebug } from './lib/utils.js';
+import { connectToRemoteServer, log, mcpProxy, setDebug, validateServerUrlSecurity } from './lib/utils.js';
 
 async function run() {
   await yargs(hideBin(process.argv))
@@ -35,7 +34,8 @@ async function run() {
       'Generate a new AgentAuth identity',
       () => {},
       () => {
-        const { agentauth_token } = generateIdentity();
+        const { agentauth_token, agentauth_id } = generateIdentity();
+        console.log(`AGENTAUTH_ID=${agentauth_id}`)
         console.log(`AGENTAUTH_TOKEN=${agentauth_token}`);
       }
     )
@@ -79,6 +79,10 @@ async function run() {
           describe: 'The transport strategy to use.',
           choices: ['sse-only', 'http-only', 'sse-first', 'http-first'],
           default: 'http-first',
+        }).option('allow-http', {
+          type: 'boolean',
+          description: 'Allow HTTP connections (not recommended for production)',
+          default: false,
         });
       },
       async (argv) => {
@@ -91,6 +95,9 @@ async function run() {
         if (argv.debug) {
           setDebug(true);
         }
+
+        // Validate server URL security (HTTPS enforcement)
+        validateServerUrlSecurity(server_url, argv['allow-http'] as boolean);
 
         const transportStrategy = argv.transport as 'sse-only' | 'http-only' | 'sse-first' | 'http-first';
 

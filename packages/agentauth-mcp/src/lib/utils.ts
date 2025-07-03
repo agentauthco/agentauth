@@ -55,6 +55,22 @@ export function setDebug(val: boolean) {
 }
 
 /**
+ * Validates that the server URL uses HTTPS or is allowed via exceptions
+ * @param serverUrl The URL to validate
+ * @param allowHttp Whether HTTP is explicitly allowed via --allow-http flag
+ * @throws Error if URL is not secure and not allowed
+ */
+export function validateServerUrlSecurity(serverUrl: string, allowHttp: boolean): void {
+  const url = new URL(serverUrl);
+  const isLocalhost = (url.hostname === 'localhost' || url.hostname === '127.0.0.1') && url.protocol === 'http:';
+  
+  if (!(url.protocol === 'https:' || isLocalhost || allowHttp)) {
+    log('Error: Non-HTTPS URLs are only allowed for localhost or when --allow-http flag is provided');
+    process.exit(1);
+  }
+}
+
+/**
  * Generates fresh AgentAuth headers for each request with current timestamp
  * @param token The AgentAuth token to sign with
  * @returns Headers object with address, signature, and base64-encoded payload

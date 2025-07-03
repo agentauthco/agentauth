@@ -27,11 +27,14 @@ describe('AgentAuth MCP CLI', () => {
   });
 
   describe('generate command', () => {
-    it('should generate a new identity and output only AGENTAUTH_TOKEN', async () => {
+    it('should generate a new identity and output AGENTAUTH_ID and AGENTAUTH_TOKEN', async () => {
       const { stdout } = await execAsync(`node ${CLI_PATH} generate`);
       
-      // Should output only the token line
-      expect(stdout.trim()).toMatch(/^AGENTAUTH_TOKEN=aa-[0-9a-fA-F]{64}$/);
+      // Should output both ID and token lines
+      expect(stdout).toContain('AGENTAUTH_ID=');
+      expect(stdout).toContain('AGENTAUTH_TOKEN=');
+      expect(stdout).toMatch(/AGENTAUTH_ID=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+      expect(stdout).toMatch(/AGENTAUTH_TOKEN=aa-[0-9a-fA-F]{64}/);
       
       // Extract the token and verify it's valid
       const tokenMatch = stdout.match(/AGENTAUTH_TOKEN=(aa-[0-9a-fA-F]{64})/);
@@ -118,6 +121,43 @@ describe('AgentAuth MCP CLI', () => {
       } catch (error: any) {
         expect(error.code).toBe(1);
         expect(error.stderr).toContain('Not enough non-option arguments');
+      }
+    });
+
+    it('should reject HTTP URLs by default', async () => {
+      try {
+        await execAsync(`node ${CLI_PATH} connect http://example.com/mcp`, { timeout: 3000 });
+        expect.fail('Should have thrown an error');
+      } catch (error: any) {
+        expect(error.code).toBe(1);
+        const output = error.stdout || error.stderr || '';
+        expect(output).toContain('Non-HTTPS URLs are only allowed for localhost or when --allow-http flag is provided');
+      }
+    });
+
+    it('should allow HTTP for localhost', async () => {
+      try {
+        // This should pass validation but fail on connection (which is expected)
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain the HTTPS validation error
+        expect(output).not.toContain('Non-HTTPS URLs are only allowed for localhost');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should allow HTTP when --allow-http flag is provided', async () => {
+      try {
+        // This should pass validation but fail on connection (which is expected)
+        await execAsync(`node ${CLI_PATH} connect http://example.com/mcp --allow-http`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain the HTTPS validation error
+        expect(output).not.toContain('Non-HTTPS URLs are only allowed for localhost');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
       }
     });
 

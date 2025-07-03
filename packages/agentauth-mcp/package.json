@@ -1,6 +1,6 @@
 {
   "name": "@agentauth/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A universal proxy for remote MCP server connections, with and without authentication.",
   "main": "dist/proxy.js",
   "types": "dist/proxy.d.ts",
@@ -45,7 +45,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@agentauth/core": "0.1.0",
+    "@agentauth/core": "0.1.1",
     "@modelcontextprotocol/sdk": "^1.12.3",
     "yargs": "^18.0.0"
   },

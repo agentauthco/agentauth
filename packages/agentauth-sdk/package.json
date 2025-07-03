@@ -1,6 +1,6 @@
 {
   "name": "@agentauth/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP-native server-side authentication for AI agents.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,8 +11,11 @@
   },
   "keywords": [
     "agentauth",
+    "agentauth-id",
     "authentication",
     "identity",
+    "self-authenticating",
+    "uuid",
     "mcp",
     "mcp-servers",
     "sdk",
@@ -37,7 +40,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@agentauth/core": "0.1.0"
+    "@agentauth/core": "0.1.1"
   },
   "engines": {
     "node": ">=18.0.0"

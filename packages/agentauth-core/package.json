@@ -1,6 +1,6 @@
 {
   "name": "@agentauth/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Core identity and cryptographic primitives for AgentAuth",
   "type": "module",
   "main": "dist/index.js",
@@ -29,14 +29,15 @@
   },
   "keywords": [
     "agentauth",
+    "agentauth-id",
     "authentication",
     "identity",
-    "mcp",
     "self-authenticating",
+    "uuid",
+    "mcp",
     "cryptography",
     "secp256k1",
     "signatures",
-    "uuid",
     "ai-agents",
     "model-context-protocol"
   ],
