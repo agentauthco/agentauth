@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { verifySignature, generateId } from '@agentauth/core';
+import { verifySignature, generateId, generateIdentity as coreGenerateIdentity, deriveAddress } from '@agentauth/core';
 import { Buffer } from 'buffer';
 
 const SIXTY_SECONDS_IN_MS = 60 * 1000;
@@ -42,6 +42,23 @@ export interface AgentAuthPayload {
 export interface VerificationResult {
   valid: boolean;
   agentauth_id?: string;
+}
+
+/**
+ * Represents a generated AgentAuth identity.
+ */
+export interface GeneratedIdentity {
+  agentauth_token: string;
+  agentauth_id: string;
+  agentauth_address: string;
+}
+
+/**
+ * Represents the result of deriving identity from an AgentAuth Token.
+ */
+export interface DerivedIdentity {
+  agentauth_id: string;
+  agentauth_address: string;
 }
 
 /**
@@ -110,4 +127,36 @@ export function verify(
     // Any parsing or verification error results in invalid
     return { valid: false };
   }
+}
+
+/**
+ * Generates a new AgentAuth identity with AgentAuth Token, ID, and Address.
+ *
+ * @returns GeneratedIdentity containing the AgentAuth Token, ID, and Address.
+ */
+export function generateIdentity(): GeneratedIdentity {
+  const { agentauth_token, agentauth_id } = coreGenerateIdentity();
+  const agentauth_address = deriveAddress(agentauth_token);
+  
+  return {
+    agentauth_token,
+    agentauth_id,
+    agentauth_address,
+  };
+}
+
+/**
+ * Derives an AgentAuth ID and Address from an existing AgentAuth Token.
+ *
+ * @param agentauth_token The AgentAuth Token to derive from.
+ * @returns DerivedIdentity containing the ID and Address.
+ */
+export function deriveFromToken(agentauth_token: string): DerivedIdentity {
+  const agentauth_address = deriveAddress(agentauth_token);
+  const agentauth_id = generateId(agentauth_address);
+  
+  return {
+    agentauth_id,
+    agentauth_address,
+  };
 }

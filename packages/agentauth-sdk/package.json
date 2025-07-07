@@ -1,7 +1,7 @@
 {
   "name": "@agentauth/sdk",
-  "version": "0.1.1",
-  "description": "MCP-native server-side authentication for AI agents.",
+  "version": "0.1.2",
+  "description": "MCP-native identity generation and authentication for AI agents.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

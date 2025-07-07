@@ -119,7 +119,7 @@ server.tool("premium-feature", "Premium tool with auth", {}, async () => {
 | Package | Description | Install | Docs |
 |---------|-------------|---------|------|
 | **[@agentauth/mcp](./packages/agentauth-mcp)** | Universal MCP proxy — connect any client to any remote server, with or without authentication | `npm install -g @agentauth/mcp` | [📖 README](./packages/agentauth-mcp/README.md) |
-| **[@agentauth/sdk](./packages/agentauth-sdk)** | Server-side SDK — add MCP-native authentication to your servers with one function call | `npm install @agentauth/sdk` | [📖 README](./packages/agentauth-sdk/README.md) |
+| **[@agentauth/sdk](./packages/agentauth-sdk)** | Server-side SDK — add MCP-native authentication and identity generation to your servers | `npm install @agentauth/sdk` | [📖 README](./packages/agentauth-sdk/README.md) |
 | **[@agentauth/core](./packages/agentauth-core)** | Core identity primitives — identity generation, signing, and verification using cryptography | (Auto-installed) | [📖 README](./packages/agentauth-core/README.md) |
 
 **Additional resources for MCP Server developers:**
@@ -130,9 +130,9 @@ server.tool("premium-feature", "Premium tool with auth", {}, async () => {
 
 ## 🏗️ How AgentAuth Works
 
-1. **One Token**: Generate a single `AgentAuth Token`
-2. **Automatic Identity**: Token derives an `AgentAuth ID` (a stable, verifiable UUID)
-3. **Self-Authentication**: Every request includes verifiable proof
+1. **One Agent, One Token**: Generate an `AgentAuth Token` for an agent instantly
+2. **Automatic Identity**: Token automatically derives an `AgentAuth ID` (a stable, verifiable UUID)
+3. **Self-Authentication**: Every request includes verifiable proof of identity
 4. **Instant Verification**: Servers verify and extract the `AgentAuth ID` in one step
 5. **Ready to Use**: Use the `AgentAuth ID` immediately in your database
 

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { verify } from './index';
+import { verify, generateIdentity as sdkGenerateIdentity, deriveFromToken } from './index';
 import {
   generateIdentity,
   signPayload,
@@ -54,7 +54,7 @@ describe('AgentAuth SDK: verify', () => {
       finalSignature = '0x' + (signature.slice(2, 3) === 'a' ? 'b' : 'a') + signature.slice(3);
     }
 
-    // Derive the correct address from the token, or use a wrong one for testing
+    // Derive the correct AgentAuth Address from the AgentAuth Token, or use a wrong one for testing
     let address = deriveAddress(agentauth_token);
     if (useWrongAddress) {
       address = '0x1234567890123456789012345678901234567890';
@@ -187,5 +187,116 @@ describe('AgentAuth SDK: verify', () => {
     const result = verify(request);
     expect(result.valid).toBe(false);
     expect(result.agentauth_id).toBeUndefined();
+  });
+});
+
+describe('AgentAuth SDK: generateIdentity', () => {
+  it('should generate a new identity with AgentAuth Token, ID, and Address', () => {
+    const identity = sdkGenerateIdentity();
+    
+    expect(identity).toHaveProperty('agentauth_token');
+    expect(identity).toHaveProperty('agentauth_id');
+    expect(identity).toHaveProperty('agentauth_address');
+    
+    // AgentAuth Token should be in aa- format
+    expect(identity.agentauth_token).toMatch(/^aa-[a-f0-9]{64}$/);
+    
+    // AgentAuth ID should be a valid UUID
+    expect(identity.agentauth_id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    
+    // AgentAuth Address should be a valid Ethereum address
+    expect(identity.agentauth_address).toMatch(/^0x[a-fA-F0-9]{40}$/);
+  });
+
+  it('should generate unique identities on each call', () => {
+    const identity1 = sdkGenerateIdentity();
+    const identity2 = sdkGenerateIdentity();
+    
+    expect(identity1.agentauth_token).not.toBe(identity2.agentauth_token);
+    expect(identity1.agentauth_id).not.toBe(identity2.agentauth_id);
+    expect(identity1.agentauth_address).not.toBe(identity2.agentauth_address);
+  });
+
+  it('should generate identity that works with verify function', () => {
+    const identity = sdkGenerateIdentity();
+    
+    // Create a request using the generated identity
+    const payload = { message: 'test', timestamp: new Date().toISOString() };
+    const signature = signPayload(payload, identity.agentauth_token);
+    
+    const request = {
+      headers: {
+        'x-agentauth-address': identity.agentauth_address,
+        'x-agentauth-payload': Buffer.from(JSON.stringify(payload)).toString('base64'),
+        'x-agentauth-signature': signature,
+      }
+    };
+    
+    const result = verify(request);
+    expect(result.valid).toBe(true);
+    expect(result.agentauth_id).toBe(identity.agentauth_id);
+  });
+});
+
+describe('AgentAuth SDK: deriveFromToken', () => {
+  it('should derive AgentAuth ID and Address from an AgentAuth Token', () => {
+    const originalIdentity = sdkGenerateIdentity();
+    const derived = deriveFromToken(originalIdentity.agentauth_token);
+    
+    expect(derived).toHaveProperty('agentauth_id');
+    expect(derived).toHaveProperty('agentauth_address');
+    expect(derived).not.toHaveProperty('agentauth_token');
+    
+    // Derived values should match original
+    expect(derived.agentauth_id).toBe(originalIdentity.agentauth_id);
+    expect(derived.agentauth_address).toBe(originalIdentity.agentauth_address);
+  });
+
+  it('should handle different token formats', () => {
+    const rawKey = '2e6bea4b9180e920e209973473ce4b6d362e564e869917907a00bb1a50dddfca';
+    const aaKey = `aa-${rawKey}`;
+    const evmKey = `0x${rawKey}`;
+    
+    const derived1 = deriveFromToken(rawKey);
+    const derived2 = deriveFromToken(aaKey);
+    const derived3 = deriveFromToken(evmKey);
+    
+    // All should produce the same results
+    expect(derived1.agentauth_id).toBe(derived2.agentauth_id);
+    expect(derived2.agentauth_id).toBe(derived3.agentauth_id);
+    expect(derived1.agentauth_address).toBe(derived2.agentauth_address);
+    expect(derived2.agentauth_address).toBe(derived3.agentauth_address);
+  });
+
+  it('should produce consistent results', () => {
+    const identity = sdkGenerateIdentity();
+    
+    const derived1 = deriveFromToken(identity.agentauth_token);
+    const derived2 = deriveFromToken(identity.agentauth_token);
+    
+    // Multiple calls should produce identical results
+    expect(derived1.agentauth_id).toBe(derived2.agentauth_id);
+    expect(derived1.agentauth_address).toBe(derived2.agentauth_address);
+  });
+
+  it('should derive identity that works with verify function', () => {
+    const originalIdentity = sdkGenerateIdentity();
+    const derived = deriveFromToken(originalIdentity.agentauth_token);
+    
+    // Create a request using the derived identity
+    const payload = { message: 'test', timestamp: new Date().toISOString() };
+    const signature = signPayload(payload, originalIdentity.agentauth_token);
+    
+    const request = {
+      headers: {
+        'x-agentauth-address': derived.agentauth_address,
+        'x-agentauth-payload': Buffer.from(JSON.stringify(payload)).toString('base64'),
+        'x-agentauth-signature': signature,
+      }
+    };
+    
+    const result = verify(request);
+    expect(result.valid).toBe(true);
+    expect(result.agentauth_id).toBe(derived.agentauth_id);
   });
 });

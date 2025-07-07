@@ -36,11 +36,11 @@ npx vitest run              # ✅ Single run, exits properly
 | Package | Tests | Purpose |
 |---------|-------|---------|
 | **agentauth-core** | 18 tests | Core cryptographic functions |
-| **agentauth-sdk** | 11 tests | Address-based verification API |
+| **agentauth-sdk** | 18 tests | Address-based verification API |
 | **agentauth-mcp** | 16 tests | CLI commands (generate, derive, connect) |
 | **e2e-tests** | 8 tests | End-to-end CLI and server integration |
 
-**Total: 53 tests**
+**Total: 60 tests**
 
 ## 🧪 **Test Categories**
 

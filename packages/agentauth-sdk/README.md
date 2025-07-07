@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/agentauthco/agentauth?style=social)](https://github.com/agentauthco/agentauth)
 
-Server-side SDK for **AgentAuth ID** — easily authenticate AI agents over MCP using AgentAuth ID.
+Server-side SDK for **AgentAuth ID** — easily authenticate AI agents over MCP using AgentAuth ID, plus generate and manage AgentAuth identities.
 
 AgentAuth ID is a **self-authenticating UUID for AI agents** — a simple, lightweight, open-source primitive for universal identity and trust, designed for use with MCP and agent-native systems.
 
@@ -19,7 +19,8 @@ Learn more about AgentAuth at https://github.com/agentauthco/agentauth.
 - **🔥 Simplest Server-side Usage** — Absolutely the simplest server-side implementation: a single UUID to identify, a single call to verify
 - **🔐 Zero Infrastructure** — No accounts, logins, or session management required
 - **🆔 Stable Agent IDs** — Each agent has its own `AgentAuth ID`, a permanent, verifiable UUID you can use immediately
-- **⚡ Stateless Verification** — One function call to authenticate any request
+- **⚡ Instant Identity Generation** — Create new `AgentAuth ID`s programmatically for any agent with a single call
+- **🌟 Stateless Verification** — One function call to authenticate any request
 - **🛡️ Cryptographically Secure** — Based on industry-standard signatures with replay protection
 - **🔧 Framework Agnostic** — Works with any MCP server, or even any HTTP server
 
@@ -33,7 +34,11 @@ npm install @agentauth/sdk
 
 ### Basic Usage
 
-The SDK provides a single `verify` function that authenticates requests and returns the agent's stable UUID:
+The SDK provides simple functions for both verifying requests and generating AgentAuth identities:
+
+#### Verify Requests
+
+Authenticate incoming requests and get the agent's stable UUID:
 
 ```typescript
 import { verify } from '@agentauth/sdk';
@@ -49,6 +54,25 @@ if (result.valid) {
   console.log('No valid authentication');
   // Provide limited access or deny request...
 }
+```
+
+#### Generate AgentAuth Identities
+
+Create new AgentAuth identities programmatically:
+
+```typescript
+import { generateIdentity, deriveFromToken } from '@agentauth/sdk';
+
+// Generate a new identity
+const identity = generateIdentity();
+console.log('New AgentAuth ID:', identity.agentauth_id);
+console.log('AgentAuth Token:', identity.agentauth_token);
+console.log('Address:', identity.agentauth_address);
+
+// Derive identity from existing token
+const derived = deriveFromToken('aa-...');
+console.log('Derived ID:', derived.agentauth_id);
+console.log('Derived Address:', derived.agentauth_address);
 ```
 
 ### MCP Server Integration
@@ -257,6 +281,47 @@ const result = verify({ headers: req.headers });
 const result = verify({ headers: req.headers }, { freshness: 120000 });
 ```
 
+### `generateIdentity()`
+
+Generates a new AgentAuth identity with token, ID, and address.
+
+**Returns:**
+```typescript
+interface GeneratedIdentity {
+  agentauth_token: string;    // AgentAuth Token (aa-...)
+  agentauth_id: string;       // UUID v5
+  agentauth_address: string;  // Ethereum-compatible address
+}
+```
+
+**Example:**
+```typescript
+const identity = generateIdentity();
+// Use identity.agentauth_id for database storage
+// Share identity.agentauth_token with the agent
+```
+
+### `deriveFromToken(agentauth_token)`
+
+Derives an AgentAuth ID and address from an existing token.
+
+**Parameters:**
+- `agentauth_token`: The AgentAuth token (supports aa-, 0x, or raw hex formats)
+
+**Returns:**
+```typescript
+interface DerivedIdentity {
+  agentauth_id: string;       // UUID v5
+  agentauth_address: string;  // Ethereum-compatible address
+}
+```
+
+**Example:**
+```typescript
+const derived = deriveFromToken('aa-...');
+// Same token always produces same ID and address
+```
+
 ** Technical Flow**
 
 ```mermaid
@@ -369,10 +434,23 @@ if (auth && !checkRateLimit(auth.agentauth_id)) {
 Full TypeScript support with exported types:
 
 ```typescript
-import { verify, VerificationResult, AgentAuthRequest, VerifyOptions } from '@agentauth/sdk';
+import { 
+  verify, 
+  generateIdentity, 
+  deriveFromToken,
+  VerificationResult, 
+  GeneratedIdentity,
+  DerivedIdentity,
+  AgentAuthRequest, 
+  VerifyOptions 
+} from '@agentauth/sdk';
 
 // Type-safe verification
 const result: VerificationResult = verify({ headers });
+
+// Type-safe identity generation
+const identity: GeneratedIdentity = generateIdentity();
+const derived: DerivedIdentity = deriveFromToken(token);
 
 // Custom request type
 interface MyRequest extends AgentAuthRequest {
