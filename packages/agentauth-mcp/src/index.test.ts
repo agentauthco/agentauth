@@ -241,4 +241,135 @@ describe('AgentAuth MCP CLI', () => {
       expect(idMatch![1]).toBe(expectedId);
     });
   });
+
+  describe('custom headers', () => {
+    it('should accept valid header format', async () => {
+      try {
+        // This should pass validation but fail on connection (which is expected)
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "API-Key:secret123" --header "Custom:value"`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors
+        expect(output).not.toContain('Invalid header format');
+        expect(output).not.toContain('Empty header key');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should reject invalid header format without colon', async () => {
+      try {
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "InvalidFormat"`, { timeout: 3000 });
+        expect.fail('Should have thrown an error');
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        expect(output).toContain('Invalid header format');
+        expect(output).toContain('Use format "Key:Value"');
+      }
+    });
+
+    it('should reject header with empty key', async () => {
+      try {
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header ":value"`, { timeout: 3000 });
+        expect.fail('Should have thrown an error');
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        expect(output).toContain('Empty header key');
+      }
+    });
+
+    it('should handle environment variable substitution', async () => {
+      try {
+        // This should pass header parsing but fail on connection
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "API-Key:\${TEST_API_KEY}" --header "Static:value"`, { 
+          timeout: 3000,
+          env: {
+            ...process.env,
+            TEST_API_KEY: 'secret123'
+          }
+        });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors
+        expect(output).not.toContain('Invalid header format');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should handle missing environment variables gracefully', async () => {
+      try {
+        // This should pass header parsing but fail on connection
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "API-Key:\${NONEXISTENT_VAR}"`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors (missing env vars become empty strings)
+        expect(output).not.toContain('Invalid header format');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should show help for header option', async () => {
+      const { stdout } = await execAsync(`node ${CLI_PATH} connect --help`);
+      
+      expect(stdout).toContain('--header');
+      expect(stdout).toContain('-H');
+      expect(stdout).toContain('Custom headers');
+      expect(stdout).toContain('Key:Value');
+      expect(stdout).toContain('${ENV_VAR}');
+    });
+
+    it('should accept multiple headers', async () => {
+      try {
+        // This should pass validation but fail on connection
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "API-Key:secret" --header "User-Agent:TestAgent" --header "Custom:value"`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors
+        expect(output).not.toContain('Invalid header format');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should work with empty header array by default', async () => {
+      try {
+        // This should pass validation but fail on connection (no custom headers)
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors
+        expect(output).not.toContain('Invalid header format');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should handle headers with spaces in values', async () => {
+      try {
+        // This should pass header parsing but fail on connection
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "User-Agent:My Custom Agent 1.0" --header "Description:This is a test"`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors
+        expect(output).not.toContain('Invalid header format');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+
+    it('should handle headers with special characters', async () => {
+      try {
+        // This should pass header parsing but fail on connection
+        await execAsync(`node ${CLI_PATH} connect http://localhost:8000/mcp --header "Authorization:Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9" --header "Content-Type:application/json"`, { timeout: 3000 });
+      } catch (error: any) {
+        const output = error.stdout || error.stderr || '';
+        // Should not contain header format errors
+        expect(output).not.toContain('Invalid header format');
+        // Should contain connection-related error instead
+        expect(output).toContain('Failed to connect to the remote server');
+      }
+    });
+  });
 });

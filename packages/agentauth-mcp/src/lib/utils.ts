@@ -89,19 +89,56 @@ export function generateFreshAuthHeaders(token: string): Record<string, string> 
   };
 }
 
+// AgentAuth headers that should not be overridden by custom headers
+const PROTECTED_AGENTAUTH_HEADERS = [
+  'x-agentauth-address',
+  'x-agentauth-signature', 
+  'x-agentauth-payload'
+] as const;
+
 /**
- * Wrapper class that adds fresh auth headers to each request by intercepting fetch calls.
+ * Check if a header name conflicts with protected AgentAuth headers (case-insensitive)
+ */
+function hasAgentAuthConflict(headerName: string): boolean {
+  const normalized = headerName.toLowerCase();
+  return PROTECTED_AGENTAUTH_HEADERS.some(
+    protectedHeader => protectedHeader.toLowerCase() === normalized
+  );
+}
+
+/**
+ * Merge custom headers with AgentAuth headers, with conflict detection and warnings
+ */
+function mergeHeaders(agentAuthHeaders: Record<string, string>, customHeaders: Record<string, string>): Record<string, string> {
+  // Check for conflicts and warn
+  Object.keys(customHeaders).forEach(headerName => {
+    if (hasAgentAuthConflict(headerName)) {
+      console.warn(`⚠️  Warning: Custom header '${headerName}' is overriding AgentAuth authentication.`);
+    }
+  });
+
+  // Custom headers take precedence over AgentAuth headers
+  return {
+    ...agentAuthHeaders,
+    ...customHeaders
+  };
+}
+
+/**
+ * Wrapper class that adds fresh auth headers and custom headers to each request by intercepting fetch calls.
  * Intercepts POST requests (MCP message sends) and injects fresh AgentAuth headers
  * with current timestamps to ensure authentication doesn't expire.
  */
 class AuthRefreshTransportWrapper implements Transport {
   private wrappedTransport: Transport;
   private token: string;
+  private customHeaders: Record<string, string>;
   private originalFetch: typeof fetch;
 
-  constructor(transport: Transport, token: string) {
+  constructor(transport: Transport, token: string, customHeaders: Record<string, string> = {}) {
     this.wrappedTransport = transport;
     this.token = token;
+    this.customHeaders = customHeaders;
     this.originalFetch = globalThis.fetch;
     this.interceptFetch();
   }
@@ -143,20 +180,21 @@ class AuthRefreshTransportWrapper implements Transport {
       // Only intercept POST requests (MCP message sending)
       if (init?.method === 'POST') {
         const freshHeaders = generateFreshAuthHeaders(self.token);
+        const finalHeaders = mergeHeaders(freshHeaders, self.customHeaders);
         
-        // Create new headers object that includes fresh auth headers
+        // Create new headers object that includes all headers
         const headers = new Headers(init.headers);
-        Object.entries(freshHeaders).forEach(([key, value]) => {
+        Object.entries(finalHeaders).forEach(([key, value]) => {
           headers.set(key, value);
         });
         
-        // Create new init with fresh headers
+        // Create new init with all headers
         const newInit = {
           ...init,
           headers
         };
         
-        debugLog('Intercepted POST request, injected fresh auth headers');
+        debugLog('Intercepted POST request, injected fresh auth headers and custom headers');
         return self.originalFetch(input, newInit);
       }
       
@@ -219,12 +257,86 @@ export function mcpProxy({ transportToClient, transportToServer }: { transportTo
 }
 
 /**
+ * Wrapper class that only adds custom headers to requests (no AgentAuth)
+ */
+class CustomHeadersTransportWrapper implements Transport {
+  private wrappedTransport: Transport;
+  private customHeaders: Record<string, string>;
+  private originalFetch: typeof fetch;
+
+  constructor(transport: Transport, customHeaders: Record<string, string>) {
+    this.wrappedTransport = transport;
+    this.customHeaders = customHeaders;
+    this.originalFetch = globalThis.fetch;
+    this.interceptFetch();
+  }
+
+  get sessionId() {
+    return this.wrappedTransport.sessionId;
+  }
+
+  set onclose(handler: () => void) {
+    this.wrappedTransport.onclose = handler;
+  }
+
+  set onerror(handler: (error: Error) => void) {
+    this.wrappedTransport.onerror = handler;
+  }
+
+  set onmessage(handler: (message: JSONRPCMessage) => void) {
+    this.wrappedTransport.onmessage = handler;
+  }
+
+  async start(): Promise<void> {
+    return this.wrappedTransport.start();
+  }
+
+  async send(message: JSONRPCMessage): Promise<void> {
+    debugLog('Sending message with custom headers via fetch interception');
+    return this.wrappedTransport.send(message);
+  }
+
+  async close(): Promise<void> {
+    // Restore original fetch
+    globalThis.fetch = this.originalFetch;
+    return this.wrappedTransport.close();
+  }
+
+  private interceptFetch(): void {
+    const self = this;
+    globalThis.fetch = async function(input: string | URL | Request, init?: RequestInit): Promise<Response> {
+      // Only intercept POST requests (MCP message sending)
+      if (init?.method === 'POST') {
+        // Create new headers object that includes custom headers
+        const headers = new Headers(init.headers);
+        Object.entries(self.customHeaders).forEach(([key, value]) => {
+          headers.set(key, value);
+        });
+        
+        // Create new init with custom headers
+        const newInit = {
+          ...init,
+          headers
+        };
+        
+        debugLog('Intercepted POST request, injected custom headers');
+        return self.originalFetch(input, newInit);
+      }
+      
+      // For non-POST requests, use original fetch
+      return self.originalFetch(input, init);
+    };
+  }
+}
+
+/**
  * Creates and connects to a remote server with transport strategy fallback support.
  * Uses the AuthRefreshTransportWrapper to provide fresh auth headers when token is provided.
  * @param serverUrl The URL of the remote server
  * @param strategy The transport strategy to use (http-first, sse-first, etc.)
  * @param recursionReasons Set tracking fallback attempts to prevent infinite recursion
  * @param token Optional AgentAuth token for authentication
+ * @param customHeaders Optional custom headers to include with requests
  * @returns The connected transport, wrapped with auth refresh if token provided
  */
 export async function connectToRemoteServer(
@@ -232,6 +344,7 @@ export async function connectToRemoteServer(
   strategy: TransportStrategy = 'http-first',
   recursionReasons: Set<string> = new Set(),
   token?: string,
+  customHeaders: Record<string, string> = {},
 ): Promise<Transport> {
   log(`Connecting to remote server: ${serverUrl} with strategy: ${strategy}`)
   const url = new URL(serverUrl)
@@ -250,7 +363,7 @@ export async function connectToRemoteServer(
   } else {
     // This case happens on the second leg of a fallback strategy
     const fallbackStrategy = strategy === 'sse-first' ? 'http-only' : 'sse-only'
-    return connectToRemoteServer(serverUrl, fallbackStrategy, recursionReasons, token)
+    return connectToRemoteServer(serverUrl, fallbackStrategy, recursionReasons, token, customHeaders)
   }
 
   debugLog(`Attempting connection with ${transport.constructor.name}`)
@@ -283,7 +396,7 @@ export async function connectToRemoteServer(
           recursionReasons.add(REASON_TRANSPORT_FALLBACK)
           // opposite transport
           const fallbackStrategy = 'sse-only'
-          return connectToRemoteServer(serverUrl, fallbackStrategy as TransportStrategy, recursionReasons, token)
+          return connectToRemoteServer(serverUrl, fallbackStrategy as TransportStrategy, recursionReasons, token, customHeaders)
         }
 
         // probe failed but no fallback; rethrow
@@ -293,10 +406,18 @@ export async function connectToRemoteServer(
 
     log(`Connected successfully using ${transport.constructor.name}.`)
     
-    // If we have a token, wrap the transport to provide fresh auth headers
-    if (token) {
+    // Determine which wrapper to use based on token and custom headers
+    const hasCustomHeaders = Object.keys(customHeaders).length > 0;
+    
+    if (token && hasCustomHeaders) {
+      debugLog('Wrapping transport with auth refresh and custom headers capability');
+      return new AuthRefreshTransportWrapper(transport, token, customHeaders);
+    } else if (token) {
       debugLog('Wrapping transport with auth refresh capability');
       return new AuthRefreshTransportWrapper(transport, token);
+    } else if (hasCustomHeaders) {
+      debugLog('Wrapping transport with custom headers capability');
+      return new CustomHeadersTransportWrapper(transport, customHeaders);
     }
     
     return transport
@@ -315,7 +436,7 @@ export async function connectToRemoteServer(
       recursionReasons.add(REASON_TRANSPORT_FALLBACK)
       
       // The logic above will ensure the other transport is tried on the recursive call
-      return connectToRemoteServer(serverUrl, strategy, recursionReasons, token)
+      return connectToRemoteServer(serverUrl, strategy, recursionReasons, token, customHeaders)
     }
 
     // If no fallback is possible or the error is not a fallback candidate, rethrow.

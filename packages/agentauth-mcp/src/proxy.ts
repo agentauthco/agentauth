@@ -27,6 +27,38 @@ import {
 } from '@agentauth/core';
 import { connectToRemoteServer, log, mcpProxy, setDebug, validateServerUrlSecurity } from './lib/utils.js';
 
+/**
+ * Parse custom headers from CLI arguments with environment variable substitution
+ */
+function parseCustomHeaders(headerArgs: string[]): Record<string, string> {
+  const headers: Record<string, string> = {};
+  
+  for (const header of headerArgs) {
+    const colonIndex = header.indexOf(':');
+    if (colonIndex === -1) {
+      console.error(`Error: Invalid header format '${header}'. Use format "Key:Value".`);
+      process.exit(1);
+    }
+    
+    const key = header.slice(0, colonIndex).trim();
+    const value = header.slice(colonIndex + 1).trim();
+    
+    if (!key) {
+      console.error(`Error: Empty header key in '${header}'.`);
+      process.exit(1);
+    }
+    
+    // Environment variable substitution
+    const expandedValue = value.replace(/\$\{([^}]+)\}/g, (match, envVarName) => {
+      return process.env[envVarName] || '';
+    });
+    
+    headers[key] = expandedValue;
+  }
+  
+  return headers;
+}
+
 async function run() {
   await yargs(hideBin(process.argv))
     .command(
@@ -83,6 +115,11 @@ async function run() {
           type: 'boolean',
           description: 'Allow HTTP connections (not recommended for production)',
           default: false,
+        }).option('header', {
+          alias: 'H',
+          type: 'array',
+          description: 'Custom headers (format: "Key:Value", supports ${ENV_VAR} substitution)',
+          default: [],
         });
       },
       async (argv) => {
@@ -100,6 +137,9 @@ async function run() {
         validateServerUrlSecurity(server_url, argv['allow-http'] as boolean);
 
         const transportStrategy = argv.transport as 'sse-only' | 'http-only' | 'sse-first' | 'http-first';
+
+        // Parse custom headers with environment variable substitution
+        const customHeaders = parseCustomHeaders(argv.header as string[]);
 
         log(`Connecting to ${server_url} with strategy ${transportStrategy}...`);
 
@@ -119,7 +159,7 @@ async function run() {
         }
 
         try {
-          const remoteTransport = await connectToRemoteServer(server_url, transportStrategy, new Set(), token);
+          const remoteTransport = await connectToRemoteServer(server_url, transportStrategy, new Set(), token, customHeaders);
           const localTransport = new StdioServerTransport();
 
           mcpProxy({

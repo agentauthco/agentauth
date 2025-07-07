@@ -10,12 +10,12 @@ Connect any MCP client to any remote MCP server — with or without authenticati
 
 ## Why `@agentauth/mcp`?
 
-- ✅ **Supports all auth types** — Compatible with MCP servers using no auth, AgentAuth, or other auth methods
+- ✅ **Supports all auth types** — Compatible with MCP servers using no auth, AgentAuth, or other auth methods (e.g. via custom headers)
 - ✅ **Native support for AgentAuth** — Natively supports connecting to MCP servers using AgentAuth
 - ✅ **Transport compatibility** — Automatically handles both HTTP and SSE MCP server connections
 - ✅ **Super simple config** — Just set the server config once and forget
 - ✅ **Works with all clients** — Works with all popular MCP clients like Claude, Cursor, Windsurf, and more
-- ✅ **Future-ready** — Built to support AgentAuth, OAuth, API keys, JWT tokens, custom headers, and more (coming soon)
+- ✅ **Future-ready** — Built to support AgentAuth, custom headers, OAuth, API keys, JWT tokens, and more (coming soon)
 
 Basically, `@agentauth/mcp` is designed to be your default MCP proxy tool - and the only one you'll need!
 
@@ -89,7 +89,33 @@ Learn more about AgentAuth [here](https://agentauth.co).
 
 ### With other credentials
 
-(Coming soon)
+Use custom headers to connect to servers requiring API keys, JWT tokens, or other authentication methods:
+
+```json
+{
+  "mcpServers": {
+    "api-server": {
+      "command": "agentauth-mcp",
+      "args": ["connect", "https://api.example.com/mcp", "--header", "API-Key:${MY_API_KEY}"],
+      "env": {
+        "MY_API_KEY": "your-secret-api-key"
+      }
+    }
+  }
+}
+```
+
+**Examples:**
+```bash
+# API key authentication
+agentauth-mcp connect https://api.example.com/mcp --header "API-Key:${API_SECRET}"
+
+# JWT/Bearer token authentication  
+agentauth-mcp connect https://api.example.com/mcp --header "Authorization:Bearer ${JWT_TOKEN}"
+
+# Multiple custom headers
+agentauth-mcp connect https://api.example.com/mcp --header "API-Key:${API_KEY}" --header "User-Agent:MyAgent/1.0"
+```
 
 ## Command Reference
 
@@ -119,6 +145,9 @@ agentauth-mcp connect http://localhost:8000/mcp/sse --transport sse-only
 
 # Allow HTTP for non-localhost (development only)
 agentauth-mcp connect http://example.com/mcp --allow-http
+
+# With custom headers
+agentauth-mcp connect https://api.example.com/mcp --header "API-Key:${API_SECRET}"
 ```
 
 **Options:**
@@ -127,6 +156,7 @@ agentauth-mcp connect http://example.com/mcp --allow-http
   - `sse-first`: Try SSE, fallback to HTTP  
   - `http-only`: HTTP only
   - `sse-only`: SSE only
+- `--header, -H`: Custom headers (format: "Key:Value", supports ${ENV_VAR} substitution)
 - `--allow-http`: Allow HTTP connections (not recommended for production, default: false)
 - `--debug, -d`: Enable debug logging
 
