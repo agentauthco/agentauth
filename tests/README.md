@@ -30,7 +30,8 @@ pnpm test
 Unit tests for individual packages are located in each package's `src/` directory:
 - `packages/agentauth-core/src/` - Core cryptographic functions
 - `packages/agentauth-sdk/src/` - Server SDK verification
-- `packages/agentauth-mcp/src/` - CLI functionality
+
+> **📦 NOTE:** The AgentAuth MCP Gateway tests are now located in its own repository at https://github.com/agentauthco/mcp-gateway
 
 ## Running All Tests
 

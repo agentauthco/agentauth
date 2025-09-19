@@ -1,5 +1,9 @@
 # AgentAuth ID: The Self-Authenticating UUID for AI Agents
 
+> **📦 IMPORTANT:** The AgentAuth MCP Gateway has moved to its own repository!
+> **New location:** https://github.com/agentauthco/mcp-gateway
+> This repository now focuses on the core identity primitives and server SDK.
+
 [![npm version](https://img.shields.io/npm/v/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![npm downloads](https://img.shields.io/npm/dm/%40agentauth%2Fcore)](https://www.npmjs.com/package/@agentauth/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,42 +25,11 @@ No logins. No sessions. No extra infra. Just a single UUID for both identity and
 
 ### For AI Agent Users
 
-1. **Generate your agent's `AgentAuth Token`:**
+**The AgentAuth MCP Gateway has moved!** Please visit the new repository for client setup instructions:
 
-```bash
-npm install -g @agentauth/mcp
-agentauth-mcp generate
-# Output:
-AGENTAUTH_ID=...
-AGENTAUTH_TOKEN=aa-...
-```
+**👉 https://github.com/agentauthco/mcp-gateway**
 
-The `AgentAuth Token` is like the password for a corresponding `AgentAuth ID` — and, since the `AgentAuth Token` can be used to derive the `AgentAuth ID`, it's all you need to include in your configuration!
-
-> [!IMPORTANT]
-> Treat your `AgentAuth Token` like a password — **store it securely** and **never share it with anyone**, as it can be used to authenticate your agent.
-
-2. **Add it to your MCP client config (e.g. Claude, Cursor, Windsurf):**
-
-```json
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "agentauth-mcp",
-      "args": ["connect", "https://example.com/mcp"],
-      "env": {
-        "AGENTAUTH_TOKEN": "aa-..."
-      }
-    }
-  }
-}
-```
-
-Since your agent's `AgentAuth Token` is stable and unique, it can be reused across **any** MCP server using AgentAuth — so when adding a new server, all you need to do is update the `connect` URL, then set once and forget!
-
-> [!NOTE]
-> - The `AgentAuth Token` is only ever **used locally** by the @agentauth/mcp package, and **never sent** to the MCP server
-> - The server only receives information to derive your `AgentAuth ID` and verify that you have the corresponding `AgentAuth Token`
+The MCP Gateway provides a universal proxy for connecting any MCP client to any remote MCP server with AgentAuth support.
 
 ### For MCP Server Developers
 
@@ -112,13 +85,12 @@ server.tool("premium-feature", "Premium tool with auth", {}, async () => {
 ## 📦 AgentAuth Packages Overview
 
 **Where to start:**
-- **MCP Client Users** — Use [`@agentauth/mcp`](./packages/agentauth-mcp) to connect any MCP client to any remote MCP server, with universal auth support
+- **MCP Client Users** — Use [`@agentauth/mcp`](https://github.com/agentauthco/mcp-gateway) to connect any MCP client to any remote MCP server, with universal auth support
 - **MCP Server Developers** — Use [`@agentauth/sdk`](./packages/agentauth-sdk) to easily add MCP-native authentication to your servers
 - **Advanced Users** — Read [`@agentauth/core`](./packages/agentauth-core) to understand the underlying identity primitives and design decisions
 
 | Package | Description | Install | Docs |
 |---------|-------------|---------|------|
-| **[@agentauth/mcp](./packages/agentauth-mcp)** | Universal MCP proxy — connect any client to any remote server, with or without authentication | `npm install -g @agentauth/mcp` | [📖 README](./packages/agentauth-mcp/README.md) |
 | **[@agentauth/sdk](./packages/agentauth-sdk)** | Server-side SDK — add MCP-native authentication and identity generation to your servers | `npm install @agentauth/sdk` | [📖 README](./packages/agentauth-sdk/README.md) |
 | **[@agentauth/core](./packages/agentauth-core)** | Core identity primitives — identity generation, signing, and verification using cryptography | (Auto-installed) | [📖 README](./packages/agentauth-core/README.md) |
 
@@ -158,7 +130,7 @@ flowchart
 
 ### MCP Client Configuration
 
-As an MCP client user, you will be using the [`@agentauth/mcp`](./packages/agentauth-mcp) package. See the README there for more details.
+As an MCP client user, you will be using the [`@agentauth/mcp`](https://github.com/agentauthco/mcp-gateway) package. See the repository for full installation and setup details.
 
 1. **Generate your agent's `AgentAuth Token`:
 
@@ -201,14 +173,14 @@ The `AgentAuth Token` is like the password for a corresponding `AgentAuth ID` �
 }
 ```
 
-The `@agentauth/mcp` proxy is designed to be your universal, long-term proxy for **ALL** remote MCP server connections. This means that:
+The `@agentauth/mcp` package is designed to be your universal, long-term proxy for **ALL** remote MCP server connections. This means that:
 - Once added, you can keep this configuration the same for as long as you use the MCP server
 - You can use the same configuration for **any remote MCP** server, even ones that don't use AgentAuth
 - You can safely use the same `AgentAuth Token` when connecting to **any** MCP server that uses AgentAuth
 - Basically, all you need to do is copy and paste the same config for every new remote MCP server you want to connect to (just update the URL after `connect`)!
 
 > [!NOTE]
-> - The `AgentAuth Token` is only ever **used locally** by the @agentauth/mcp package, and **never sent** to the MCP server
+> - The `AgentAuth Token` is only ever **used locally** by the `@agentauth/mcp` package, and **never sent** to the MCP server
 > - The server only receives information to derive your `AgentAuth ID` and verify that you have the corresponding `AgentAuth Token`
 
 ### MCP Server Integration
@@ -337,9 +309,11 @@ cd examples/weather-server && pnpm run start  # Starts the weather server at htt
 ## 📚 Documentation
 
 **Package Documentation:**
-- **[@agentauth/mcp README](./packages/agentauth-mcp/README.md)** — Universal MCP proxy for connecting clients to remote servers
 - **[@agentauth/sdk README](./packages/agentauth-sdk/README.md)** — Server-side SDK for adding MCP-native authentication
 - **[@agentauth/core README](./packages/agentauth-core/README.md)** — Core identity primitives and cryptographic functions
+
+**MCP Gateway (moved to separate repository):**
+- **[@agentauth/mcp](https://github.com/agentauthco/mcp-gateway)** — Universal MCP proxy for connecting clients to remote servers
 
 **Examples and Testing:**
 - **[Working Example](./examples/weather-server/README.md)** — Complete weather server with tiered authentication

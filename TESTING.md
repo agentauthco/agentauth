@@ -13,8 +13,7 @@ pnpm test
 
 # Or run individually from each package directory:
 cd packages/agentauth-core && pnpm test
-cd packages/agentauth-sdk && pnpm test  
-cd packages/agentauth-mcp && pnpm test
+cd packages/agentauth-sdk && pnpm test
 
 # Separate e2e tests
 cd tests/e2e && pnpm test
@@ -37,10 +36,11 @@ npx vitest run              # ✅ Single run, exits properly
 |---------|-------|---------|
 | **agentauth-core** | 18 tests | Core cryptographic functions |
 | **agentauth-sdk** | 18 tests | Address-based verification API |
-| **agentauth-mcp** | 26 tests | CLI commands (generate, derive, connect) |
 | **e2e-tests** | 8 tests | End-to-end CLI and server integration |
 
-**Total: 70 tests**
+**Total: 44 tests**
+
+> **📦 NOTE:** The AgentAuth MCP Gateway (formerly `@agentauth/mcp`) has moved to its own repository at https://github.com/agentauthco/mcp-gateway and has its own test suite.
 
 ## 🧪 **Test Categories**
 
@@ -60,12 +60,6 @@ npx vitest run              # ✅ Single run, exits properly
 - ✅ Multiple private key format support
 - ✅ Simplified response format
 
-#### **agentauth-mcp** (CLI Commands)
-- ✅ `generate` command functionality
-- ✅ `derive` command with multiple formats
-- ✅ `connect` command validation
-- ✅ Error handling and help output
-- ✅ Integration with crypto-utils
 
 ### **2. E2E Tests**
 
@@ -197,8 +191,9 @@ it('should establish connection', async () => {
 
 3. **Path resolution errors**
    ```bash
-   # Verify CLI is built and in correct location
-   ls packages/agentauth-mcp/dist/proxy.js
+   # Verify packages are built correctly
+   ls packages/agentauth-core/dist/
+   ls packages/agentauth-sdk/dist/
    ```
 
 4. **Port conflicts**
@@ -246,9 +241,8 @@ pnpm run build && pnpm run test
 ## 🏆 **Test Success Criteria**
 
 - **agentauth-core**: 18/18 tests passing
-- **agentauth-sdk**: 11/11 tests passing  
-- **agentauth-mcp**: 13/13 tests passing
-- **e2e-tests**: 7/7 tests passing
+- **agentauth-sdk**: 18/18 tests passing
+- **e2e-tests**: 8/8 tests passing
 - **Manual tests**: Working example functional
 - **Zero hanging processes** after test completion
 
